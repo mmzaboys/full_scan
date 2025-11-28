@@ -1,0 +1,26 @@
+name: IaC Security Scan
+
+on:
+  workflow_call:
+
+jobs:
+  iac-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Trivy
+        uses: aquasecurity/trivy-action@master
+
+      - name: Run Trivy IaC Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "config"
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: iac-report
+          path: trivy-results

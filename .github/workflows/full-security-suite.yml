@@ -1,0 +1,30 @@
+name: Full Security Suite
+
+on:
+  workflow_call:
+    inputs:
+      run_iac:
+        type: boolean
+        default: true
+      run_containers:
+        type: boolean
+        default: true
+      run_secrets:
+        type: boolean
+        default: true
+      run_sast:
+        type: boolean
+        default: true
+
+jobs:
+  iac:
+    if: inputs.run_iac
+    uses: ./.github/workflows/iac-scan.yml@v1
+
+  containers:
+    if: inputs.run_containers
+    uses: ./.github/workflows/container-scan.yml@v1
+    with:
+      image_name: "my-app:latest"
+
+  
