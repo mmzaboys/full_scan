@@ -19,11 +19,10 @@ on:
 jobs:
   iac:
     if: inputs.run_iac
-    uses: ./.github/workflows/iac-scan.yml@v1
-
+    uses: mmzaboys/full_scan/.github/workflows/iac-scan.yml@v1
   containers:
     if: inputs.run_containers
-    uses: ./.github/workflows/container-scan.yml@v1
+    uses: mmzaboys/full_scan/.github/workflows/container-scan.yml@v1
     with:
       image_name: "my-app:latest"
 
