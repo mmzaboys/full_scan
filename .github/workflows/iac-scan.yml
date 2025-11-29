@@ -16,9 +16,11 @@ jobs:
       - name: Trivy IaC Scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: config
-          exit-code: "1"
-          severity: CRITICAL,HIGH
+          scan-type: 'config'
+          scan-ref: '.'  # ← ADD THIS - scans current directory
+          format: 'sarif'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
