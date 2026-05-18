@@ -1,0 +1,44 @@
+name: Sast Scan
+
+description: Scan source code using Bandit
+
+inputs:
+  source_code_path:
+    description: Path to source code
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+
+      with:
+        python-version: "3.11"
+
+    - name: Install Bandit
+      shell: bash
+
+      run: |
+        pip install bandit
+
+    - name: Run Bandit Scan
+      shell: bash
+
+      run: |
+        bandit \
+          -ll \
+          -ii \
+          -r ${{ inputs.source_code_path }} \
+          -f json \
+          -o bandit-report.json
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+
+      if: always()
+
+      with:
+        name: bandit-findings
+        path: bandit-report.json

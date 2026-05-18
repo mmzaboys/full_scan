@@ -1,0 +1,40 @@
+name: Container Scan
+
+description: Scan container images using Docker Scout
+
+inputs:
+  image_name:
+    description: The container image to scan
+    required: true
+
+  REPO_USER:
+    description: DockerHub username
+    required: true
+
+  REPO_PWD:
+    description: DockerHub password
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Docker Scout Scan
+      uses: docker/scout-action@v1.0.9
+
+      with:
+        image: ${{ inputs.image_name }}
+        dockerhub-user: ${{ inputs.REPO_USER }}
+        dockerhub-password: ${{ inputs.REPO_PWD }}
+        command: quickview,cves
+        only-severities: critical,high
+        sarif-file: scout-report.sarif
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+
+      if: always()
+
+      with:
+        name: docker-scout-findings
+        path: scout-report.sarif

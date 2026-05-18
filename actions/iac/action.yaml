@@ -1,0 +1,38 @@
+name: Iac Scan
+
+description: Scan infrastructure as code using Trivy
+
+inputs:
+  iac_Path:
+    description: Path to IaC files
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Check IaC files
+      shell: bash
+
+      run: |
+        if [ -f .trivyignore ]; then
+          trivy config \
+            --severity CRITICAL,HIGH \
+            --exit-code 1 \
+            --ignorefile .trivyignore \
+            ${{ inputs.iac_Path }}
+        else
+          trivy config \
+            --severity CRITICAL,HIGH \
+            --exit-code 1 \
+            ${{ inputs.iac_Path }}
+        fi
+
+    - name: Upload Report
+      uses: actions/upload-artifact@v4
+
+      if: always()
+
+      with:
+        name: iac-report
+        path: .
